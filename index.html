@@ -1064,10 +1064,279 @@
                 transition-duration: 0.01ms !important;
             }
         }
+
+        /* ============================================
+           ENVELOPE INTRO OVERLAY
+        ============================================ */
+        #envelope-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: radial-gradient(ellipse at 50% 60%, rgba(35,18,5,0.97) 0%, rgba(10,5,2,0.99) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            transition: opacity 0.75s ease, visibility 0.75s ease;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        #envelope-overlay.closing {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Overlay floating particles */
+        .env-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #F5E6A3, #C9A84C);
+            opacity: 0;
+            pointer-events: none;
+            animation: envFloat linear infinite;
+        }
+
+        @keyframes envFloat {
+            0%   { opacity: 0; transform: translateY(0) scale(0) rotate(0deg); }
+            15%  { opacity: 0.7; }
+            85%  { opacity: 0.2; }
+            100% { opacity: 0; transform: translateY(-110px) scale(1.3) rotate(60deg); }
+        }
+
+        /* Sparkle ring that pulses around the seal */
+        @keyframes sealRing {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50%       { transform: translate(-50%, -50%) scale(1.15); opacity: 0.15; }
+        }
+
+        /* Envelope 3D wrapper */
+        .env-perspective {
+            perspective: 1000px;
+            position: relative;
+        }
+
+        .env-wrap {
+            position: relative;
+            width: 300px;
+            height: 196px;
+            transform-style: preserve-3d;
+            transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity  0.9s ease;
+            filter: drop-shadow(0 24px 48px rgba(0,0,0,0.55))
+                    drop-shadow(0 0 20px rgba(201,168,76,0.25));
+        }
+
+        .env-wrap.zoom-out {
+            transform: scale(0.04) translateY(60px);
+            opacity: 0;
+        }
+
+        /* ── Envelope Body ── */
+        .env-body {
+            position: absolute;
+            inset: 0;
+            border-radius: 3px 3px 8px 8px;
+            background: linear-gradient(155deg, #FEFCF6 0%, #F7EDDA 40%, #EEE0C2 100%);
+            border: 1.5px solid rgba(201,168,76,0.7);
+            overflow: hidden;
+        }
+
+        /* Side diagonal folds (left & right shadow lines) */
+        .env-body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(135deg, rgba(201,168,76,0.18) 0%, transparent 42%),
+                linear-gradient(225deg, rgba(201,168,76,0.18) 0%, transparent 42%);
+        }
+
+        /* Bottom flap shadow line (decorative V) */
+        .env-body::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 50%;
+            background: linear-gradient(160deg, #F0E4C8 0%, #E6D4A8 100%);
+            clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+            border-top: 1px solid rgba(201,168,76,0.35);
+        }
+
+        /* ── Inner glow (golden light emerging from inside) ── */
+        .env-glow {
+            position: absolute;
+            inset: 2px 2px 4px 2px;
+            border-radius: 3px 3px 8px 8px;
+            background: radial-gradient(ellipse at 50% 45%,
+                rgba(255, 238, 140, 0.95) 0%,
+                rgba(248, 218, 90, 0.75) 25%,
+                rgba(201, 168, 76, 0.4) 55%,
+                transparent 75%);
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .env-glow.visible { opacity: 1; }
+
+        /* ── Top flap (the animated opening flap) ── */
+        .env-flap {
+            position: absolute;
+            top: -1px; left: -1px; right: -1px;
+            /* Height covers top half of envelope */
+            height: 52%;
+            background: linear-gradient(165deg, #FDFAF0 0%, #EDE0C6 55%, #E2D0A8 100%);
+            /* V-shape (point at bottom center) */
+            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+            border-top: 1.5px solid rgba(201,168,76,0.7);
+            transform-origin: top center;
+            transform: rotateX(0deg);
+            transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 4;
+            backface-visibility: hidden;
+            /* Subtle crease line inside flap */
+            box-shadow: inset 0 4px 12px rgba(201,168,76,0.10);
+        }
+
+        .env-flap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+        }
+
+        .env-flap.open {
+            transform: rotateX(-185deg);
+        }
+
+        /* ── Wax Seal ── */
+        .env-seal {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            width: 54px; height: 54px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 38% 35%, #EFE08A, #C9A84C 50%, #8B6914 85%);
+            box-shadow:
+                0 4px 14px rgba(0,0,0,0.35),
+                0 0 0 2.5px rgba(201,168,76,0.55),
+                0 0 24px rgba(201,168,76,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Great Vibes', cursive;
+            font-size: 28px;
+            color: rgba(61,43,31,0.85);
+            z-index: 5;
+            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+        }
+
+        /* Dashed ring around seal */
+        .env-seal::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            border: 1.5px dashed rgba(201,168,76,0.55);
+            animation: sealRing 2s ease-in-out infinite;
+        }
+
+        .env-seal.broken {
+            transform: translate(-50%, -50%) scale(0) rotate(30deg);
+            opacity: 0;
+        }
+
+        /* ── Tap / Touch prompt ── */
+        .env-tap {
+            margin-top: 38px;
+            font-family: 'Great Vibes', cursive;
+            font-size: 24px;
+            color: rgba(232, 212, 139, 0.88);
+            letter-spacing: 2px;
+            text-shadow: 0 0 22px rgba(201,168,76,0.7), 0 0 6px rgba(201,168,76,0.4);
+            animation: tapPulse 2.2s ease-in-out infinite;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .env-tap.hidden { opacity: 0; }
+
+        @keyframes tapPulse {
+            0%, 100% { opacity: 0.65; transform: scale(1); }
+            50%       { opacity: 1;    transform: scale(1.05); }
+        }
+
+        /* Subtle top label above envelope */
+        .env-label {
+            margin-bottom: 28px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: rgba(232, 212, 139, 0.5);
+            transition: opacity 0.3s ease;
+        }
+
+        .env-label.hidden { opacity: 0; }
+
+        /* Starburst sparkle (appears on seal break) */
+        .env-sparkle {
+            position: absolute;
+            pointer-events: none;
+            transform-origin: center;
+        }
+
+        @keyframes starburst {
+            0%   { opacity: 1; transform: scale(0.2) rotate(0deg); }
+            60%  { opacity: 0.8; }
+            100% { opacity: 0; transform: scale(3) rotate(80deg); }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- ================================================
+         SOBRE INTERACTIVO — OVERLAY DE ENTRADA PREMIUM
+    ================================================ -->
+    <div id="envelope-overlay" role="dialog" aria-label="Invitación de bautizo — toca para abrir" aria-modal="true">
+
+        <!-- Partículas doradas flotantes -->
+        <div id="env-particles" aria-hidden="true"></div>
+
+        <!-- Etiqueta superior -->
+        <p class="env-label" id="env-label">Invitación Especial</p>
+
+        <!-- Sobre con perspectiva 3D -->
+        <div class="env-perspective">
+            <div class="env-wrap" id="env-wrap">
+
+                <!-- Cuerpo del sobre -->
+                <div class="env-body"></div>
+
+                <!-- Resplandor dorado interior -->
+                <div class="env-glow" id="env-glow"></div>
+
+                <!-- Solapa superior animada -->
+                <div class="env-flap" id="env-flap"></div>
+
+                <!-- Sello de lacre -->
+                <div class="env-seal" id="env-seal" aria-hidden="true">R</div>
+
+            </div>
+        </div>
+
+        <!-- Texto de instrucción -->
+        <p class="env-tap" id="env-tap">✦ Toca para abrir ✦</p>
+
+    </div>
 
     <!-- NAV DOTS (9 secciones) -->
     <nav class="nav-dots" aria-label="Navegación por secciones">
@@ -1747,6 +2016,110 @@
 
         tick();
         setInterval(tick, 1000);
+
+        /* ============================
+           ENVELOPE INTRO
+        ============================ */
+        (function () {
+            const overlay = document.getElementById('envelope-overlay');
+            const flap    = document.getElementById('env-flap');
+            const seal    = document.getElementById('env-seal');
+            const glow    = document.getElementById('env-glow');
+            const tap     = document.getElementById('env-tap');
+            const label   = document.getElementById('env-label');
+            const wrap    = document.getElementById('env-wrap');
+            const pCont   = document.getElementById('env-particles');
+
+            /* Lock scroll while overlay is active */
+            document.body.style.overflow = 'hidden';
+
+            /* Generate floating gold particles */
+            for (let i = 0; i < 22; i++) {
+                const p = document.createElement('div');
+                p.className = 'env-particle';
+                const size = Math.random() * 5 + 2;
+                p.style.cssText = `
+                    width:${size}px; height:${size}px;
+                    left:${Math.random() * 100}%;
+                    top:${Math.random() * 100}%;
+                    animation-duration:${Math.random() * 5 + 4}s;
+                    animation-delay:${Math.random() * 5}s;
+                `;
+                pCont.appendChild(p);
+            }
+
+            /* Spawn starburst SVG at seal position */
+            function spawnSparkle() {
+                const sealRect = seal.getBoundingClientRect();
+                const cx = sealRect.left + sealRect.width / 2;
+                const cy = sealRect.top  + sealRect.height / 2;
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '80');
+                svg.setAttribute('height', '80');
+                svg.setAttribute('viewBox', '0 0 80 80');
+                svg.style.cssText = `
+                    position:fixed;
+                    left:${cx - 40}px; top:${cy - 40}px;
+                    pointer-events:none; z-index:10000;
+                    animation: starburst 0.55s ease-out forwards;
+                `;
+                svg.innerHTML = `
+                    <g fill="none" stroke="#F5E6A3" stroke-linecap="round">
+                        <line x1="40" y1="10" x2="40" y2="25" stroke-width="2.5"/>
+                        <line x1="40" y1="55" x2="40" y2="70" stroke-width="2.5"/>
+                        <line x1="10" y1="40" x2="25" y2="40" stroke-width="2.5"/>
+                        <line x1="55" y1="40" x2="70" y2="40" stroke-width="2.5"/>
+                        <line x1="18" y1="18" x2="28" y2="28" stroke-width="2"/>
+                        <line x1="52" y1="52" x2="62" y2="62" stroke-width="2"/>
+                        <line x1="62" y1="18" x2="52" y2="28" stroke-width="2"/>
+                        <line x1="18" y1="62" x2="28" y2="52" stroke-width="2"/>
+                    </g>
+                    <circle cx="40" cy="40" r="6" fill="#F5E6A3" opacity="0.9"/>
+                `;
+                document.body.appendChild(svg);
+                setTimeout(() => svg.remove(), 600);
+            }
+
+            /* Main animation sequence */
+            function openEnvelope() {
+                /* Step 1 – hide tap text & label */
+                tap.classList.add('hidden');
+                label.classList.add('hidden');
+
+                /* Step 2 – sparkle + break seal */
+                spawnSparkle();
+                seal.classList.add('broken');
+
+                /* Step 3 – open flap (3D rotation) */
+                setTimeout(() => {
+                    flap.classList.add('open');
+                }, 320);
+
+                /* Step 4 – golden inner glow */
+                setTimeout(() => {
+                    glow.classList.add('visible');
+                }, 640);
+
+                /* Step 5 – zoom envelope out */
+                setTimeout(() => {
+                    wrap.classList.add('zoom-out');
+                }, 960);
+
+                /* Step 6 – fade overlay */
+                setTimeout(() => {
+                    overlay.classList.add('closing');
+                    document.body.style.overflow = '';
+                }, 1320);
+
+                /* Step 7 – remove overlay from DOM */
+                setTimeout(() => {
+                    overlay.remove();
+                }, 2100);
+            }
+
+            overlay.addEventListener('click',     openEnvelope, { once: true });
+            overlay.addEventListener('touchstart', openEnvelope, { once: true, passive: true });
+        })();
     </script>
 
 </body>
