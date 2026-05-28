@@ -70,7 +70,6 @@
 
         html {
             scroll-behavior: smooth;
-            height: -webkit-fill-available;
         }
 
         body {
@@ -82,8 +81,6 @@
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
         }
 
         /* ============================================
@@ -199,15 +196,6 @@
             font-weight: 500;
             color: var(--text-dark);
             line-height: 1.4;
-        }
-
-        .role-label {
-            font-size: 9px;
-            font-weight: 600;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 6px;
         }
 
         /* ============================================
@@ -400,6 +388,7 @@
             background: var(--gold-light);
             opacity: 0;
             pointer-events: none;
+            will-change: transform, opacity;
             animation: floatParticle linear infinite;
         }
 
@@ -412,9 +401,7 @@
         }
 
         .invitation-card {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
             border: 1px solid rgba(201, 168, 76, 0.22);
             border-radius: var(--radius-xl);
             padding: 36px 28px 28px;
@@ -548,10 +535,6 @@
             margin-bottom: 10px;
         }
 
-        .name-group {
-            margin-bottom: 0;
-        }
-
         /* ============================================
        SECTION 4 – REGALOS
     ============================================ */
@@ -562,9 +545,7 @@
         }
 
         .gift-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: var(--radius-xl);
             padding: 40px 28px;
             text-align: center;
@@ -820,14 +801,6 @@
             background: linear-gradient(160deg, var(--warm-white) 0%, var(--beige) 100%);
         }
 
-        #contador .section-label {
-            color: var(--gold-dark);
-        }
-
-        #contador .section-title {
-            color: var(--text-dark);
-        }
-
         .countdown-wrap {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -856,9 +829,14 @@
             width: 100%;
             text-align: center;
             padding: 14px 6px;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
             font-variant-numeric: tabular-nums;
             box-shadow: 0 4px 16px var(--shadow-soft);
+        }
+
+        .countdown-value.update {
+            transform: scale(1.15);
+            color: var(--gold);
         }
 
         .countdown-label {
@@ -888,9 +866,7 @@
         }
 
         .notice-card {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: var(--radius-xl);
             padding: 36px 28px;
             text-align: center;
@@ -959,9 +935,7 @@
         }
 
         .confirm-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: var(--radius-xl);
             padding: 40px 28px;
             text-align: center;
@@ -1065,6 +1039,21 @@
             .confirm-card,
             .gift-card {
                 max-width: 480px;
+            }
+        }
+
+        @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+            .invitation-card,
+            .confirm-card {
+                background: rgba(255, 255, 255, 0.88);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+            }
+            .gift-card,
+            .notice-card {
+                background: rgba(255, 255, 255, 0.90);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
             }
         }
 
@@ -1198,6 +1187,7 @@
             background: radial-gradient(circle, #F5E6A3, #C9A84C);
             opacity: 0;
             pointer-events: none;
+            will-change: transform, opacity;
             animation: envFloat linear infinite;
         }
 
@@ -1247,6 +1237,7 @@
             width: 300px;
             height: 196px;
             transform-style: preserve-3d;
+            will-change: transform, opacity;
             transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1),
                 opacity 0.9s ease;
             filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 20px rgba(201, 168, 76, 0.25));
@@ -1323,7 +1314,7 @@
             clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
             border-top: 1.5px solid rgba(201, 168, 76, 0.7);
             transform-origin: top center;
-            transform: rotateX(0deg);
+            will-change: transform;
             transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 4;
             backface-visibility: hidden;
@@ -1360,10 +1351,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Great Vibes', cursive;
+            font-family: var(--font-display);
             font-size: 28px;
             color: rgba(61, 43, 31, 0.85);
             z-index: 5;
+            will-change: transform, opacity;
             transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
         }
 
@@ -1385,7 +1377,7 @@
         /* ── Tap / Touch prompt ── */
         .env-tap {
             margin-top: 38px;
-            font-family: 'Great Vibes', cursive;
+            font-family: var(--font-display);
             font-size: 24px;
             color: rgba(232, 212, 139, 0.88);
             letter-spacing: 2px;
@@ -1416,7 +1408,7 @@
         /* Subtle top label above envelope */
         .env-label {
             margin-bottom: 28px;
-            font-family: 'Montserrat', sans-serif;
+            font-family: var(--font-body);
             font-size: 9px;
             font-weight: 600;
             letter-spacing: 5px;
@@ -2215,20 +2207,20 @@
         function animateVal(id, newVal) {
             const el = document.getElementById(id);
             if (el.textContent === newVal) return;
-            el.style.transform = 'scale(1.15)';
-            el.style.color = 'var(--gold)';
+            el.classList.add('update');
             setTimeout(() => {
                 el.textContent = newVal;
-                el.style.transform = 'scale(1)';
-                el.style.color = '';
+                el.classList.remove('update');
             }, 150);
         }
 
+        let countdownInterval;
         function tick() {
             const diff = eventDate - new Date();
             if (diff <= 0) {
                 ['days', 'hours', 'minutes', 'seconds'].forEach(id => document.getElementById(id).textContent = '00');
                 document.querySelector('.countdown-message').textContent = '¡Hoy es el gran día! 🎉';
+                if (countdownInterval) clearInterval(countdownInterval);
                 return;
             }
             animateVal('days', pad(Math.floor(diff / 86400000)));
@@ -2238,7 +2230,7 @@
         }
 
         tick();
-        setInterval(tick, 1000);
+        countdownInterval = setInterval(tick, 1000);
 
         /* ============================
            ENVELOPE INTRO
@@ -2305,6 +2297,22 @@
 
             /* Main animation sequence */
             function openEnvelope() {
+                /* Soporte para prefers-reduced-motion */
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    overlay.remove();
+                    document.body.style.overflow = '';
+                    bubble.classList.add('visible');
+                    const music = document.getElementById('bg-music');
+                    music.volume = 0.6;
+                    music.play().then(() => {
+                        bubble.classList.add('playing');
+                        document.getElementById('music-icon-play').style.display = 'none';
+                        document.getElementById('music-icon-pause').style.display = 'block';
+                        bubble.setAttribute('aria-label', 'Pausar música');
+                    }).catch(() => {});
+                    return;
+                }
+
                 /* Step 1 – hide tap text & label */
                 tap.classList.add('hidden');
                 label.classList.add('hidden');
@@ -2352,7 +2360,12 @@
                 setTimeout(() => {
                     overlay.remove();
                     bubble.classList.add('visible');
-                    if (!music.paused) bubble.classList.add('playing');
+                    if (!music.paused) {
+                        bubble.classList.add('playing');
+                        document.getElementById('music-icon-play').style.display = 'none';
+                        document.getElementById('music-icon-pause').style.display = 'block';
+                        bubble.setAttribute('aria-label', 'Pausar música');
+                    }
                 }, 2100);
             }
 
@@ -2373,14 +2386,14 @@
                 if (music.paused) {
                     music.play();
                     bubble.classList.add('playing');
-                    iconPlay.style.display = 'block';
-                    iconPause.style.display = 'none';
+                    iconPlay.style.display = 'none';
+                    iconPause.style.display = 'block';
                     bubble.setAttribute('aria-label', 'Pausar música');
                 } else {
                     music.pause();
                     bubble.classList.remove('playing');
-                    iconPlay.style.display = 'none';
-                    iconPause.style.display = 'block';
+                    iconPlay.style.display = 'block';
+                    iconPause.style.display = 'none';
                     bubble.setAttribute('aria-label', 'Reanudar música');
                 }
             });
