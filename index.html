@@ -1043,12 +1043,14 @@
         }
 
         @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+
             .invitation-card,
             .confirm-card {
                 background: rgba(255, 255, 255, 0.88);
                 backdrop-filter: blur(12px);
                 -webkit-backdrop-filter: blur(12px);
             }
+
             .gift-card,
             .notice-card {
                 background: rgba(255, 255, 255, 0.90);
@@ -1657,7 +1659,7 @@
     <section id="familia">
 
         <p class="section-label reveal">Con amor</p>
-        <h2 class="section-title reveal reveal-delay-1">Familia &amp;<br>Padrinos</h2>
+        <h2 class="section-title reveal reveal-delay-1">Padres &amp;<br>Padrinos</h2>
 
         <div class="gold-divider reveal reveal-delay-2">
             <!-- Olivo (símbolo de familia y paz) -->
@@ -2309,7 +2311,7 @@
                         document.getElementById('music-icon-play').style.display = 'none';
                         document.getElementById('music-icon-pause').style.display = 'block';
                         bubble.setAttribute('aria-label', 'Pausar música');
-                    }).catch(() => {});
+                    }).catch(() => { });
                     return;
                 }
 
